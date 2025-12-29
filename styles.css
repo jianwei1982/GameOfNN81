@@ -1,0 +1,710 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+#app {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 屏幕切换 */
+.screen {
+    display: none;
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    min-height: 400px;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* 开始界面 */
+#start-screen h1 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+#start-screen p {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.2em;
+}
+
+.question-count-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.count-btn {
+    padding: 15px 25px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    background: #667eea;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.count-btn:hover {
+    background: #5a6fd8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.count-btn:focus {
+    outline: 2px solid #4c63d2;
+    outline-offset: 2px;
+}
+
+.count-btn:active {
+    transform: translateY(0);
+}
+
+/* 游戏界面 */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.progress {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.score-info {
+    display: flex;
+    gap: 20px;
+    font-weight: bold;
+}
+
+.question-container {
+    text-align: center;
+}
+
+.question {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.answer-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.answer-btn {
+    padding: 20px;
+    font-size: 1.3em;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-all;
+}
+
+.answer-btn:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.answer-btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.answer-btn.correct {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.answer-btn.incorrect {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.answer-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+/* 结果界面 */
+#result-screen h2 {
+    color: #667eea;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+}
+
+.result-stats {
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1em;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #666;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #333;
+}
+
+.restart-button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 10px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.restart-button:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.restart-button:focus {
+    outline: 2px solid #1e7e34;
+    outline-offset: 2px;
+}
+
+.restart-button:active {
+    transform: translateY(0);
+}
+
+/* 响应式设计 */
+
+/* 大屏幕桌面 (1200px+) - 优化大屏幕体验 */
+@media (min-width: 1200px) {
+    #app {
+        max-width: 800px;
+        padding: 30px;
+    }
+    
+    .screen {
+        padding: 50px;
+        min-height: 500px;
+    }
+    
+    #start-screen h1 {
+        font-size: 3em;
+        margin-bottom: 30px;
+    }
+    
+    .question {
+        font-size: 3em;
+        margin-bottom: 40px;
+    }
+    
+    .answer-options {
+        max-width: 500px;
+        gap: 20px;
+    }
+    
+    .answer-btn {
+        padding: 25px;
+        font-size: 1.4em;
+    }
+    
+    .count-btn {
+        padding: 20px 30px;
+        font-size: 1.2em;
+    }
+}
+
+/* 标准桌面 (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    #app {
+        max-width: 700px;
+        padding: 25px;
+    }
+    
+    .screen {
+        padding: 45px;
+    }
+    
+    .answer-options {
+        max-width: 450px;
+    }
+}
+
+/* 平板设备 (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    #app {
+        padding: 20px;
+        max-width: 600px;
+    }
+    
+    .screen {
+        padding: 35px;
+    }
+    
+    .question {
+        font-size: 2.2em;
+    }
+    
+    .answer-options {
+        max-width: 400px;
+    }
+    
+    .game-header {
+        padding: 20px;
+    }
+    
+    .score-info {
+        gap: 15px;
+    }
+}
+
+/* 小平板和大手机 (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    #app {
+        padding: 15px;
+    }
+    
+    .screen {
+        padding: 25px;
+        min-height: 350px;
+    }
+    
+    #start-screen h1 {
+        font-size: 2.2em;
+    }
+    
+    .question {
+        font-size: 2em;
+    }
+    
+    .answer-options {
+        grid-template-columns: 1fr;
+        max-width: 320px;
+        gap: 12px;
+    }
+    
+    .answer-btn {
+        padding: 18px;
+        font-size: 1.2em;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .score-info {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 10px;
+    }
+    
+    .question-count-options {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 280px;
+    }
+}
+
+/* 手机设备 (320px - 575px) */
+@media (max-width: 575px) {
+    body {
+        padding: 10px;
+    }
+    
+    #app {
+        padding: 10px;
+        width: 100%;
+    }
+    
+    .screen {
+        padding: 20px;
+        min-height: 300px;
+        border-radius: 10px;
+    }
+    
+    #start-screen h1 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+    
+    #start-screen p {
+        font-size: 1em;
+        margin-bottom: 25px;
+    }
+    
+    .question {
+        font-size: 1.6em;
+        margin-bottom: 25px;
+        line-height: 1.2;
+    }
+    
+    .answer-options {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        gap: 10px;
+    }
+    
+    .answer-btn {
+        padding: 15px;
+        font-size: 1.1em;
+        min-height: 50px;
+        border-radius: 8px;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .progress {
+        font-size: 1.1em;
+    }
+    
+    .score-info {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.9em;
+    }
+    
+    .question-count-options {
+        grid-template-columns: 1fr;
+        max-width: 200px;
+        gap: 10px;
+    }
+    
+    .count-btn {
+        padding: 12px 20px;
+        font-size: 1em;
+        min-height: 45px;
+    }
+    
+    .result-stats {
+        margin-bottom: 25px;
+    }
+    
+    .stat-item {
+        padding: 12px 0;
+        font-size: 1em;
+    }
+    
+    .restart-button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+        min-height: 45px;
+    }
+    
+    #result-screen h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+}
+
+/* 超小屏幕 (最小320px) */
+@media (max-width: 320px) {
+    .screen {
+        padding: 15px;
+    }
+    
+    #start-screen h1 {
+        font-size: 1.5em;
+    }
+    
+    .question {
+        font-size: 1.4em;
+    }
+    
+    .answer-btn {
+        padding: 12px;
+        font-size: 1em;
+        min-height: 45px;
+    }
+    
+    .count-btn {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        min-height: 40px;
+    }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+    .answer-btn,
+    .count-btn,
+    .restart-button {
+        min-height: 48px; /* 符合触摸目标最小尺寸 */
+        min-width: 48px;
+    }
+    
+    .answer-btn:hover,
+    .count-btn:hover,
+    .restart-button:hover {
+        transform: none; /* 移除悬停动画，因为触摸设备没有真正的悬停 */
+    }
+    
+    .answer-btn:active,
+    .count-btn:active,
+    .restart-button:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* 横屏模式优化 */
+@media (orientation: landscape) and (max-height: 500px) {
+    .screen {
+        padding: 15px;
+        min-height: auto;
+    }
+    
+    .game-header {
+        margin-bottom: 15px;
+    }
+    
+    .question {
+        margin-bottom: 15px;
+        font-size: 1.8em;
+    }
+    
+    .answer-options {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 400px;
+    }
+    
+    #start-screen h1 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+    
+    #start-screen p {
+        margin-bottom: 20px;
+    }
+}
+
+/* 高对比度和可访问性增强 */
+@media (prefers-contrast: high) {
+    .answer-btn {
+        border-width: 3px;
+    }
+    
+    .count-btn {
+        border: 2px solid #4a5568;
+    }
+    
+    .screen {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .answer-btn:hover,
+    .count-btn:hover,
+    .restart-button:hover {
+        transform: none;
+    }
+}
+
+/* 视觉反馈动画 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* 答案按钮动画增强 */
+.answer-btn.correct {
+    animation: pulse 0.6s ease-in-out;
+}
+
+.answer-btn.incorrect {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* 界面切换动画 */
+.screen.active {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 加载状态样式 */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #667eea;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 文本选择和复制防护 */
+.screen {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* 确保内容不会溢出 */
+.question-container,
+.result-stats,
+.game-header {
+    overflow: hidden;
+}
+
+/* 改善文本渲染 */
+.question,
+#start-screen h1,
+#result-screen h2 {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 确保按钮文本不换行 */
+.count-btn,
+.restart-button {
+    white-space: nowrap;
+}
+
+/* 改善焦点可见性 */
+button:focus-visible {
+    outline: 2px solid #4c63d2;
+    outline-offset: 2px;
+}
+
+/* 打印样式 */
+@media print {
+    body {
+        background: white;
+    }
+    
+    .screen {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .answer-btn,
+    .count-btn,
+    .restart-button {
+        border: 1px solid #333;
+        background: white;
+        color: black;
+    }
+}

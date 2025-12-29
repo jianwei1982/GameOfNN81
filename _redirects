@@ -1,0 +1,9 @@
+# Netlify重定向文件
+# 这个文件确保单页应用(SPA)路由正常工作
+
+# 主页重定向
+/game /index.html 200
+/play /index.html 200
+
+# 404页面重定向到主页
+/* /index.html 200
