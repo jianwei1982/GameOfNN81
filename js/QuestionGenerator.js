@@ -34,8 +34,8 @@ class QuestionGenerator {
      * @returns {Object} 题目对象
      */
     generateSingleQuestion() {
-        const multiplicand = Math.floor(Math.random() * 9) + 1; // 1-9
-        const multiplier = Math.floor(Math.random() * 9) + 1;   // 1-9
+        const multiplicand = Math.floor(Math.random() * 8) + 2; // 2-9
+        const multiplier = Math.floor(Math.random() * 8) + 2;   // 2-9
         const correctAnswer = multiplicand * multiplier;
         const options = this.createMultipleChoice(correctAnswer);
 
