@@ -107,8 +107,14 @@ class UIRenderer {
      * @param {Object} question - 题目对象
      */
     displayQuestion(question) {
-        this.elements.questionText.textContent = 
-            `${question.multiplicand} × ${question.multiplier} = ?`;
+        let questionText;
+        if (question.questionType === 'division') {
+            questionText = `${question.dividend} ÷ ${question.divisor} = ?`;
+        } else {
+            questionText = `${question.multiplicand} × ${question.multiplier} = ?`;
+        }
+
+        this.elements.questionText.textContent = questionText;
         
         // 设置答案选项
         this.elements.answerButtons.forEach((button, index) => {

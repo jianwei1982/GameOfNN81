@@ -12,7 +12,8 @@ class GameController {
             currentQuestionIndex: 0,
             questions: [],
             isGameActive: false,
-            selectedQuestionCount: 10
+            selectedQuestionCount: 10,
+            questionType: 'multiplication'
         };
         
         this.initializeEventListeners();
@@ -22,12 +23,21 @@ class GameController {
      * 初始化事件监听器
      */
     initializeEventListeners() {
-        // 使用事件委托来处理动态内容
+        let currentQuestionType = 'multiplication';
+
+        // 题目类型选择
         document.addEventListener('click', (e) => {
+            // 题目类型选择按钮
+            if (e.target.classList.contains('type-btn')) {
+                document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentQuestionType = e.target.dataset.type;
+            }
+
             // 题目数量选择按钮
             if (e.target.classList.contains('count-btn')) {
                 const count = parseInt(e.target.dataset.count);
-                this.startGame(count);
+                this.startGame(count, currentQuestionType);
             }
             
             // 答案选择按钮
@@ -46,24 +56,33 @@ class GameController {
     /**
      * 开始游戏
      * @param {number} questionCount - 题目数量
+     * @param {string} questionType - 题目类型 'multiplication' 或 'division'
      */
-    startGame(questionCount = 10) {
+    startGame(questionCount = 10, questionType = 'multiplication') {
         try {
             // 验证输入参数
             if (!Number.isInteger(questionCount) || questionCount <= 0) {
                 console.warn('无效的题目数量，使用默认值10');
                 questionCount = 10;
             }
-            
+
+            // 验证题目类型
+            if (questionType !== 'multiplication' && questionType !== 'division' && questionType !== 'mixed') {
+                console.warn('无效的题目类型，使用默认值multiplication');
+                questionType = 'multiplication';
+            }
+
             this.gameState.selectedQuestionCount = questionCount;
             this.gameState.currentQuestionIndex = 0;
             this.gameState.isGameActive = true;
-            
+            this.gameState.questionType = questionType;
+
             // 重置管理器
             this.scoreManager.reset();
             this.scoreManager.setTotalQuestions(questionCount);
             this.questionGenerator.reset();
-            
+            this.questionGenerator.setQuestionType(questionType);
+
             // 生成题目
             this.gameState.questions = this.questionGenerator.generateQuestions(questionCount);
             
@@ -99,7 +118,10 @@ class GameController {
                 
                 this.uiRenderer.renderGameScreen(currentQuestion, progress, stats);
                 
-                console.log(`显示第${this.gameState.currentQuestionIndex + 1}题: ${currentQuestion.multiplicand} × ${currentQuestion.multiplier}`);
+                const questionDisplay = currentQuestion.questionType === 'division'
+                    ? `${currentQuestion.dividend} ÷ ${currentQuestion.divisor}`
+                    : `${currentQuestion.multiplicand} × ${currentQuestion.multiplier}`;
+                console.log(`显示第${this.gameState.currentQuestionIndex + 1}题: ${questionDisplay}`);
             } else {
                 console.warn('没有更多题目可显示');
                 this.endGame();

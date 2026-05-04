@@ -1,10 +1,33 @@
 /**
  * 题目生成器类
- * 负责生成1×1到9×9范围内的乘法题目和四选一答案选项
+ * 负责生成1×1到9×9范围内的乘法/除法题目和四选一答案选项
  */
 class QuestionGenerator {
     constructor() {
         this.usedQuestions = new Set();
+        this.questionType = 'multiplication'; // 'multiplication' 或 'division'
+    }
+
+    /**
+     * 设置题目类型
+     * @param {string} type - 'multiplication', 'division' 或 'mixed'
+     */
+    setQuestionType(type) {
+        if (type === 'mixed') {
+            this.questionType = 'mixed';
+        } else if (type === 'division') {
+            this.questionType = 'division';
+        } else {
+            this.questionType = 'multiplication';
+        }
+    }
+
+    /**
+     * 获取题目类型
+     * @returns {string} 题目类型
+     */
+    getQuestionType() {
+        return this.questionType;
     }
 
     /**
@@ -18,8 +41,11 @@ class QuestionGenerator {
 
         while (questions.length < count) {
             const question = this.generateSingleQuestion();
-            const questionKey = `${question.multiplicand}x${question.multiplier}`;
-            
+
+            const questionKey = question.questionType === 'division'
+                ? `D${question.dividend}÷${question.divisor}`
+                : `M${question.multiplicand}x${question.multiplier}`;
+
             if (!this.usedQuestions.has(questionKey)) {
                 this.usedQuestions.add(questionKey);
                 questions.push(question);
@@ -30,18 +56,59 @@ class QuestionGenerator {
     }
 
     /**
-     * 生成单个题目
+     * 生成单个题目（根据当前题目类型）
      * @returns {Object} 题目对象
      */
     generateSingleQuestion() {
+        if (this.questionType === 'mixed') {
+            // 混合模式：随机选择乘法或除法
+            return Math.random() < 0.5
+                ? this.generateMultiplicationQuestion()
+                : this.generateDivisionQuestion();
+        } else if (this.questionType === 'division') {
+            return this.generateDivisionQuestion();
+        } else {
+            return this.generateMultiplicationQuestion();
+        }
+    }
+
+    /**
+     * 生成单个乘法题目
+     * @returns {Object} 题目对象
+     */
+    generateMultiplicationQuestion() {
         const multiplicand = Math.floor(Math.random() * 8) + 2; // 2-9
         const multiplier = Math.floor(Math.random() * 8) + 2;   // 2-9
         const correctAnswer = multiplicand * multiplier;
         const options = this.createMultipleChoice(correctAnswer);
 
         return {
+            questionType: 'multiplication',
             multiplicand,
             multiplier,
+            correctAnswer,
+            options,
+            userAnswer: null,
+            isCorrect: null
+        };
+    }
+
+    /**
+     * 生成单个除法题目
+     * @returns {Object} 题目对象
+     */
+    generateDivisionQuestion() {
+        // 先随机生成除数和商（2-9），然后计算被除数
+        const divisor = Math.floor(Math.random() * 8) + 2;  // 2-9
+        const quotient = Math.floor(Math.random() * 8) + 2; // 2-9
+        const dividend = divisor * quotient;                // 4-81
+        const correctAnswer = quotient;
+        const options = this.createMultipleChoice(correctAnswer);
+
+        return {
+            questionType: 'division',
+            dividend,
+            divisor,
             correctAnswer,
             options,
             userAnswer: null,
