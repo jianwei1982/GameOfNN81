@@ -7,7 +7,11 @@ class GameController {
         this.questionGenerator = new QuestionGenerator();
         this.scoreManager = new ScoreManager();
         this.uiRenderer = new UIRenderer();
-        
+
+        // 音效
+        this.correctSound = new Audio('sound/kara-yippee.ogg');
+        this.wrongSound = new Audio('sound/kara-not-that-one.ogg');
+
         this.gameState = {
             currentQuestionIndex: 0,
             questions: [],
@@ -175,7 +179,16 @@ class GameController {
             
             // 记录答题日志
             console.log(`第${this.gameState.currentQuestionIndex + 1}题答题结果: ${isCorrect ? '正确' : '错误'}, 选择: ${selectedAnswer}, 正确答案: ${currentQuestion.correctAnswer}`);
-            
+
+            // 播放音效
+            if (isCorrect) {
+                this.correctSound.currentTime = 0;
+                this.correctSound.play().catch(e => console.log('播放正确音效失败:', e));
+            } else {
+                this.wrongSound.currentTime = 0;
+                this.wrongSound.play().catch(e => console.log('播放错误音效失败:', e));
+            }
+
             if (isCorrect) {
                 // 答对了，直接进入下一题或结束游戏
                 if (isLastQuestion) {
