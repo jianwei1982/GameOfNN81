@@ -335,9 +335,17 @@ class GameController {
             }
             return;
         }
-        this.scoreManager.persistedScore = 0;
-        await this.scoreManager.storage.saveScore(0);
-        this.uiRenderer.renderStartScreen(0);
+        try {
+            // 同时清空积分和记录，保持数据一致
+            this.scoreManager.persistedScore = 0;
+            await this.scoreManager.storage.saveScore(0);
+            await this.scoreManager.clearLogs();
+            await this.scoreManager.init(); // 重新加载最新数据
+            this.uiRenderer.renderStartScreen(0);
+        } catch (e) {
+            console.error('清空积分失败:', e);
+            alert('清空积分失败，请重试');
+        }
     }
 
     /**
@@ -351,8 +359,14 @@ class GameController {
             }
             return;
         }
-        await this.scoreManager.clearLogs();
-        this.uiRenderer.renderStartScreen(this.scoreManager.getTotalScore());
+        try {
+            await this.scoreManager.clearLogs();
+            await this.scoreManager.init(); // 重新加载最新数据
+            this.uiRenderer.renderStartScreen(this.scoreManager.getTotalScore());
+        } catch (e) {
+            console.error('清空记录失败:', e);
+            alert('清空记录失败，请重试');
+        }
     }
 
     /**
