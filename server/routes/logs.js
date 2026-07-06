@@ -58,5 +58,20 @@ module.exports = function(pool) {
         }
     });
 
+    // 清空日志
+    router.delete('/', async (req, res, next) => {
+        try {
+            await pool.execute('TRUNCATE TABLE logs');
+            // 重新插入初始记录以确保表结构正常
+            await pool.execute(
+                'INSERT INTO logs (type, detail, score_change, balance_after) VALUES (?, ?, ?, ?)',
+                ['correct', '积分已清空', 0, 0]
+            );
+            res.json({ success: true });
+        } catch (err) {
+            next(err);
+        }
+    });
+
     return router;
 };

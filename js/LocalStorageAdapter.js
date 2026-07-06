@@ -60,6 +60,16 @@ class LocalStorageAdapter {
         }
     }
 
+    async clearLogs() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(this.storageKey) || '{"score":0,"logs":[]}');
+            saved.logs = [];
+            localStorage.setItem(this.storageKey, JSON.stringify(saved));
+        } catch (e) {
+            console.warn('清空日志失败:', e);
+        }
+    }
+
     async drawLottery() {
         const saved = JSON.parse(localStorage.getItem(this.storageKey) || '{"score":0,"logs":[]}');
         const cost = 100;

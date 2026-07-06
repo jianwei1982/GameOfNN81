@@ -73,6 +73,14 @@ class ApiStorageAdapter {
         }
     }
 
+    async clearLogs() {
+        try {
+            await this.request('DELETE', '/logs');
+        } catch (e) {
+            console.warn('API 清空日志失败:', e);
+        }
+    }
+
     async drawLottery() {
         const res = await fetch(`${this.baseUrl}/lottery`, { method: 'POST' });
         const data = await res.json();

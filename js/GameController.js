@@ -63,6 +63,11 @@ class GameController {
                 this.clearScore();
             }
 
+            // 清空积分记录按钮（开始界面）
+            if (e.target.id === 'clear-logs-btn') {
+                this.clearLogHistory();
+            }
+
             // 抽红包入口按钮（开始界面）
             if (e.target.id === 'lottery-btn-start') {
                 this.showLottery();
@@ -333,6 +338,21 @@ class GameController {
         this.scoreManager.persistedScore = 0;
         await this.scoreManager.storage.saveScore(0);
         this.uiRenderer.renderStartScreen(0);
+    }
+
+    /**
+     * 清空积分记录（需要验证码 881225）
+     */
+    async clearLogHistory() {
+        const code = prompt('请输入验证码清空所有积分记录：');
+        if (code !== '881225') {
+            if (code !== null) {
+                alert('验证码错误，积分记录未清空');
+            }
+            return;
+        }
+        await this.scoreManager.clearLogs();
+        this.uiRenderer.renderStartScreen(this.scoreManager.getTotalScore());
     }
 
     /**

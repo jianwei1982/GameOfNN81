@@ -179,6 +179,14 @@ class ScoreManager {
     }
 
     /**
+     * 清空所有日志记录
+     */
+    async clearLogs() {
+        this.persistedLogs = [];
+        await this.storage.clearLogs();
+    }
+
+    /**
      * 获取最近的日志
      */
     getRecentLogs(count = 50) {
