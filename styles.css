@@ -83,44 +83,316 @@ body {
     color: white;
 }
 
-.question-count-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    max-width: 300px;
-    margin: 0 auto;
+/* 禁用按钮样式 */
+.type-btn.disabled,
+.type-btn[disabled] {
+    border-color: #ccc;
+    color: #bbb;
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
-.count-btn {
-    padding: 15px 25px;
-    font-size: 1.1em;
+.type-btn.disabled:hover,
+.type-btn[disabled]:hover {
+    background: #f5f5f5;
+}
+
+/* 开始游戏按钮 */
+.start-game-btn {
+    padding: 16px 50px;
+    font-size: 1.3em;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    margin-bottom: 30px;
+}
+
+.start-game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.start-game-btn:active {
+    transform: translateY(0);
+}
+
+/* 开始界面积分显示 */
+.start-score-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    flex-wrap: wrap;
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.start-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.clear-score-btn {
+    padding: 10px 16px;
+    font-size: 0.95em;
+    border: none;
+    border-radius: 8px;
+    background: #fff3f3;
+    color: #c0392b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.clear-score-btn:hover {
+    background: #fde8e8;
+    transform: translateY(-1px);
+}
+
+.log-history-btn {
+    padding: 10px 16px;
+    font-size: 0.95em;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.log-history-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.score-label {
+    color: #666;
+    font-size: 1em;
+}
+
+/* 积分记录弹窗 */
+.log-history-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    animation: fadeIn 0.2s ease;
+}
+
+.log-history-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.log-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+.log-history-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #f0f0f0;
+    color: #666;
+    font-size: 1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.log-history-close-btn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+/* 积分记录筛选栏 */
+.log-history-filters {
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-size: 0.85em;
+    color: #666;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.filter-date-input {
+    padding: 6px 10px;
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    color: #333;
+    background: white;
+}
+
+.filter-date-input:focus {
+    border-color: #667eea;
+}
+
+.filter-type-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filter-type-btn {
+    padding: 5px 12px;
+    font-size: 0.85em;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-type-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.filter-type-btn.active {
+    border-color: #667eea;
     background: #667eea;
+    color: white;
+}
+
+@media (max-width: 575px) {
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-type-btns {
+        justify-content: center;
+    }
+}
+
+.log-history-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+    max-height: 40vh;
+}
+
+.log-history-list .log-entry {
+    padding: 8px 20px;
+}
+    padding: 12px 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.log-history-clear-btn {
+    padding: 8px 20px;
+    font-size: 0.9em;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.log-history-clear-btn:hover {
+    background: #fff5f5;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+@media (max-width: 575px) {
+    .log-history-container {
+        max-width: 95vw;
+        max-height: 85vh;
+    }
+    .log-history-list .log-entry {
+        grid-template-columns: 60px 1fr 40px 55px;
+        font-size: 0.7em;
+        padding: 6px 12px;
+    }
+}
+
+.score-value {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.lottery-nav-btn {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
-.count-btn:hover {
-    background: #5a6fd8;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.count-btn:focus {
-    outline: 2px solid #4c63d2;
-    outline-offset: 2px;
-}
-
-.count-btn:active {
-    transform: translateY(0);
+.lottery-nav-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
 }
 
 /* 游戏界面 */
@@ -128,7 +400,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     padding: 15px;
     background: #f8f9fa;
     border-radius: 10px;
@@ -140,10 +412,116 @@ body {
     color: #667eea;
 }
 
-.score-info {
+.game-header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.game-score-info {
     display: flex;
     gap: 20px;
     font-weight: bold;
+}
+
+.score-item {
+    font-size: 1em;
+}
+
+/* 退出按钮 */
+.exit-game-btn {
+    padding: 6px 14px;
+    font-size: 0.85em;
+    border: 1px solid #e0b4b4;
+    border-radius: 6px;
+    background: #fff5f5;
+    color: #c0392b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.exit-game-btn:hover {
+    background: #ffebee;
+    border-color: #dc3545;
+    transform: translateY(-1px);
+}
+
+/* 连击指示器 */
+.streak-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 15px;
+    margin-bottom: 15px;
+    background: #f0f4ff;
+    border-radius: 20px;
+    font-size: 0.95em;
+    min-height: 38px;
+    position: relative;
+    overflow: hidden;
+}
+
+.streak-type {
+    color: #667eea;
+    font-weight: 500;
+}
+
+.streak-count {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #e74c3c;
+    min-width: 20px;
+}
+
+.streak-label {
+    color: #666;
+}
+
+.streak-coeff-label {
+    color: #666;
+    margin-left: 5px;
+}
+
+.streak-coeff {
+    font-weight: bold;
+    color: #667eea;
+    font-size: 1.1em;
+    min-width: 30px;
+}
+
+/* 积分变化浮动显示 */
+.score-change {
+    position: absolute;
+    right: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    opacity: 0;
+}
+
+.score-change.score-up {
+    color: #28a745;
+}
+
+.score-change.score-down {
+    color: #dc3545;
+}
+
+@keyframes scorePop {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.3);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.8);
+    }
 }
 
 .question-container {
@@ -213,6 +591,103 @@ body {
     transform: none;
 }
 
+/* 日志面板 */
+.log-panel {
+    margin-top: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.log-header:hover {
+    background: #f0f0f0;
+}
+
+.log-body {
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-list {
+    padding: 5px 0;
+}
+
+.log-empty {
+    text-align: center;
+    color: #999;
+    padding: 20px;
+    font-size: 0.9em;
+}
+
+.log-entry {
+    display: grid;
+    grid-template-columns: 80px 1fr 60px 70px;
+    gap: 5px;
+    padding: 6px 12px;
+    font-size: 0.8em;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+}
+
+.log-entry:last-child {
+    border-bottom: none;
+}
+
+.log-time {
+    color: #999;
+    font-size: 0.9em;
+}
+
+.log-detail {
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.log-change {
+    text-align: right;
+    font-weight: bold;
+}
+
+.log-change-up {
+    color: #28a745;
+}
+
+.log-change-down {
+    color: #dc3545;
+}
+
+.log-balance {
+    text-align: right;
+    color: #666;
+}
+
+.log-correct {
+    background: #f0fff4;
+}
+
+.log-wrong {
+    background: #fff5f5;
+}
+
+.log-lottery {
+    background: #fffbf0;
+}
+
 /* 结果界面 */
 #result-screen h2 {
     color: #667eea;
@@ -244,6 +719,18 @@ body {
 .stat-value {
     font-weight: bold;
     color: #333;
+}
+
+.highlight-score {
+    color: #e74c3c;
+    font-size: 1.2em;
+}
+
+.result-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .restart-button {
@@ -278,43 +765,380 @@ body {
     transform: translateY(0);
 }
 
+.lottery-button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.lottery-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+}
+
+/* ------------------ 抽红包界面 ------------------ */
+.lottery-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.lottery-container {
+    position: relative;
+    width: 320px;
+    max-width: 90vw;
+}
+
+.lottery-close-x {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.lottery-close-x:hover {
+    background: rgba(0,0,0,0.8);
+    transform: scale(1.1);
+}
+
+.lottery-phase {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 微信风格红包 - 关闭状态 */
+.red-packet-wrapper {
+    text-align: center;
+}
+
+.red-packet {
+    width: 260px;
+    height: 340px;
+    background: linear-gradient(180deg, #ee0a24 0%, #c9081e 50%, #a00616 100%);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 25px;
+    box-shadow: 0 10px 40px rgba(238, 10, 36, 0.5);
+    position: relative;
+    overflow: hidden;
+    animation: packetPulse 1.5s ease-in-out infinite;
+    margin: 0 auto 15px;
+}
+
+.red-packet::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.red-packet-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.red-packet-line {
+    width: 40px;
+    height: 2px;
+    background: rgba(255, 215, 0, 0.6);
+}
+
+.red-packet-amount-label {
+    color: #ffd700;
+    font-size: 1em;
+    letter-spacing: 2px;
+}
+
+.red-packet-money {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.money-amount {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.money-unit {
+    font-size: 0.8em;
+    color: rgba(255, 215, 0, 0.7);
+}
+
+.red-packet-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.open-packet-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #ffd700;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    font-size: 1.4em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 2px;
+}
+
+.open-packet-btn:hover {
+    background: rgba(255, 215, 0, 0.3);
+    transform: scale(1.1);
+}
+
+.open-packet-btn:active {
+    transform: scale(0.95);
+}
+
+.red-packet-balance {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9em;
+}
+
+@keyframes packetPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+/* 开红包动画 - 打开中 */
+.red-packet-opening {
+    width: 280px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: openShake 0.6s ease-in-out;
+}
+
+.opening-effect {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+    animation: goldenGlow 1.2s ease-out forwards;
+}
+
+.opening-amount {
+    text-align: center;
+    z-index: 1;
+    animation: amountAppear 0.8s ease-out 0.3s both;
+}
+
+.opening-label {
+    color: #ffd700;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    letter-spacing: 3px;
+}
+
+.opening-money {
+    font-size: 4em;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.opening-unit {
+    color: #ffd700;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+@keyframes openShake {
+    0% { transform: scale(1) rotate(0deg); }
+    20% { transform: scale(1.05) rotate(-3deg); }
+    40% { transform: scale(1.1) rotate(3deg); }
+    60% { transform: scale(1.05) rotate(-2deg); }
+    80% { transform: scale(1.02) rotate(1deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes goldenGlow {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(2);
+    }
+}
+
+@keyframes amountAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* 红包已打开 - 显示结果 */
+.red-packet-opened {
+    width: 280px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.opened-effect {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+    border-radius: 50%;
+    animation: sparkle 1s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+.opened-amount-display {
+    margin-bottom: 25px;
+}
+
+.opened-label {
+    color: #ffd700;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.opened-money {
+    font-size: 4em;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
+
+.opened-unit {
+    color: #ffd700;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.opened-balance {
+    color: rgba(255,255,255,0.8);
+    font-size: 1em;
+    margin-bottom: 25px;
+}
+
+.close-lottery-btn {
+    padding: 12px 40px;
+    font-size: 1.1em;
+    border: 2px solid #ffd700;
+    border-radius: 25px;
+    background: transparent;
+    color: #ffd700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.close-lottery-btn:hover {
+    background: rgba(255, 215, 0, 0.15);
+    transform: translateY(-1px);
+}
+
 /* 响应式设计 */
 
-/* 大屏幕桌面 (1200px+) - 优化大屏幕体验 */
+/* 大屏幕桌面 (1200px+) */
 @media (min-width: 1200px) {
     #app {
         max-width: 800px;
         padding: 30px;
     }
-    
+
     .screen {
         padding: 50px;
         min-height: 500px;
     }
-    
+
     #start-screen h1 {
         font-size: 3em;
         margin-bottom: 30px;
     }
-    
+
     .question {
         font-size: 3em;
         margin-bottom: 40px;
     }
-    
+
     .answer-options {
         max-width: 500px;
         gap: 20px;
     }
-    
+
     .answer-btn {
         padding: 25px;
         font-size: 1.4em;
-    }
-    
-    .count-btn {
-        padding: 20px 30px;
-        font-size: 1.2em;
     }
 }
 
@@ -324,11 +1148,11 @@ body {
         max-width: 700px;
         padding: 25px;
     }
-    
+
     .screen {
         padding: 45px;
     }
-    
+
     .answer-options {
         max-width: 450px;
     }
@@ -340,24 +1164,24 @@ body {
         padding: 20px;
         max-width: 600px;
     }
-    
+
     .screen {
         padding: 35px;
     }
-    
+
     .question {
         font-size: 2.2em;
     }
-    
+
     .answer-options {
         max-width: 400px;
     }
-    
+
     .game-header {
         padding: 20px;
     }
-    
-    .score-info {
+
+    .game-score-info {
         gap: 15px;
     }
 }
@@ -367,47 +1191,53 @@ body {
     #app {
         padding: 15px;
     }
-    
+
     .screen {
         padding: 25px;
         min-height: 350px;
     }
-    
+
     #start-screen h1 {
         font-size: 2.2em;
     }
-    
+
     .question {
         font-size: 2em;
     }
-    
+
     .answer-options {
         grid-template-columns: 1fr;
         max-width: 320px;
         gap: 12px;
     }
-    
+
     .answer-btn {
         padding: 18px;
         font-size: 1.2em;
     }
-    
+
     .game-header {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
         text-align: center;
         padding: 15px;
     }
-    
-    .score-info {
+
+    .game-score-info {
         flex-direction: row;
         justify-content: space-around;
         gap: 10px;
     }
-    
-    .question-count-options {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 280px;
+
+    .red-packet {
+        width: 220px;
+        height: 290px;
+        padding: 25px 20px;
+    }
+
+    .opened-money,
+    .opening-money {
+        font-size: 3em;
     }
 }
 
@@ -416,95 +1246,142 @@ body {
     body {
         padding: 10px;
     }
-    
+
     #app {
         padding: 10px;
         width: 100%;
     }
-    
+
     .screen {
         padding: 20px;
         min-height: 300px;
         border-radius: 10px;
     }
-    
+
     #start-screen h1 {
         font-size: 1.8em;
         margin-bottom: 15px;
     }
-    
+
     #start-screen p {
         font-size: 1em;
         margin-bottom: 25px;
     }
-    
+
     .question {
         font-size: 1.6em;
         margin-bottom: 25px;
         line-height: 1.2;
     }
-    
+
     .answer-options {
         grid-template-columns: 1fr;
         max-width: 100%;
         gap: 10px;
     }
-    
+
     .answer-btn {
         padding: 15px;
         font-size: 1.1em;
         min-height: 50px;
         border-radius: 8px;
     }
-    
+
     .game-header {
         flex-direction: column;
         gap: 10px;
         text-align: center;
         padding: 12px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
-    
+
+    .game-header-right {
+        flex-direction: column;
+        gap: 8px;
+    }
+
     .progress {
         font-size: 1.1em;
+        width: 100%;
+        justify-content: center;
     }
-    
-    .score-info {
+
+    .game-score-info {
+        flex-direction: row;
+        justify-content: center;
+        gap: 15px;
+    }
         flex-direction: column;
         gap: 8px;
         font-size: 0.9em;
     }
-    
-    .question-count-options {
-        grid-template-columns: 1fr;
-        max-width: 200px;
+
+    .streak-indicator {
+        font-size: 0.85em;
+        padding: 6px 10px;
+        flex-wrap: wrap;
+    }
+
+    .start-score-section {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .start-actions {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .result-actions {
+        flex-direction: column;
         gap: 10px;
     }
-    
-    .count-btn {
-        padding: 12px 20px;
-        font-size: 1em;
-        min-height: 45px;
+
+    .restart-button,
+    .lottery-button {
+        width: 100%;
     }
-    
+
     .result-stats {
         margin-bottom: 25px;
     }
-    
+
     .stat-item {
         padding: 12px 0;
         font-size: 1em;
     }
-    
+
     .restart-button {
         padding: 12px 25px;
         font-size: 1.1em;
         min-height: 45px;
     }
-    
+
     #result-screen h2 {
         font-size: 1.8em;
         margin-bottom: 20px;
+    }
+
+    .red-packet {
+        width: 200px;
+        height: 270px;
+        padding: 20px 15px;
+    }
+
+    .opened-money,
+    .opening-money {
+        font-size: 2.5em;
+    }
+
+    .log-entry {
+        grid-template-columns: 60px 1fr 40px 55px;
+        font-size: 0.7em;
+        padding: 5px 8px;
+    }
+
+    .lottery-container {
+        width: 280px;
     }
 }
 
@@ -513,46 +1390,56 @@ body {
     .screen {
         padding: 15px;
     }
-    
+
     #start-screen h1 {
         font-size: 1.5em;
     }
-    
+
     .question {
         font-size: 1.4em;
     }
-    
+
     .answer-btn {
         padding: 12px;
         font-size: 1em;
         min-height: 45px;
     }
-    
-    .count-btn {
-        padding: 10px 15px;
-        font-size: 0.9em;
-        min-height: 40px;
+
+    .red-packet {
+        width: 180px;
+        height: 240px;
     }
 }
 
 /* 触摸设备优化 */
 @media (hover: none) and (pointer: coarse) {
     .answer-btn,
-    .count-btn,
-    .restart-button {
-        min-height: 48px; /* 符合触摸目标最小尺寸 */
+    .restart-button,
+    .lottery-button,
+    .start-game-btn,
+    .lottery-nav-btn,
+    .open-packet-btn,
+    .close-lottery-btn,
+    .clear-score-btn {
+        min-height: 48px;
         min-width: 48px;
     }
-    
+
     .answer-btn:hover,
-    .count-btn:hover,
-    .restart-button:hover {
-        transform: none; /* 移除悬停动画，因为触摸设备没有真正的悬停 */
+    .restart-button:hover,
+    .lottery-button:hover,
+    .start-game-btn:hover,
+    .lottery-nav-btn:hover,
+    .clear-score-btn:hover {
+        transform: none;
     }
-    
+
     .answer-btn:active,
-    .count-btn:active,
-    .restart-button:active {
+    .restart-button:active,
+    .lottery-button:active,
+    .start-game-btn:active,
+    .lottery-nav-btn:active,
+    .clear-score-btn:active {
         transform: scale(0.95);
         transition: transform 0.1s ease;
     }
@@ -564,26 +1451,26 @@ body {
         padding: 15px;
         min-height: auto;
     }
-    
+
     .game-header {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
-    
+
     .question {
         margin-bottom: 15px;
         font-size: 1.8em;
     }
-    
+
     .answer-options {
         grid-template-columns: repeat(2, 1fr);
         max-width: 400px;
     }
-    
+
     #start-screen h1 {
         font-size: 2em;
         margin-bottom: 15px;
     }
-    
+
     #start-screen p {
         margin-bottom: 20px;
     }
@@ -594,11 +1481,7 @@ body {
     .answer-btn {
         border-width: 3px;
     }
-    
-    .count-btn {
-        border: 2px solid #4a5568;
-    }
-    
+
     .screen {
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     }
@@ -613,11 +1496,14 @@ body {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    
+
     .answer-btn:hover,
-    .count-btn:hover,
-    .restart-button:hover {
+    .start-game-btn:hover {
         transform: none;
+    }
+
+    .red-packet {
+        animation: none;
     }
 }
 
@@ -691,14 +1577,12 @@ body {
     user-select: none;
 }
 
-/* 确保内容不会溢出 */
 .question-container,
 .result-stats,
 .game-header {
     overflow: hidden;
 }
 
-/* 改善文本渲染 */
 .question,
 #start-screen h1,
 #result-screen h2 {
@@ -706,13 +1590,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* 确保按钮文本不换行 */
-.count-btn,
-.restart-button {
-    white-space: nowrap;
-}
-
-/* 改善焦点可见性 */
 button:focus-visible {
     outline: 2px solid #4c63d2;
     outline-offset: 2px;
@@ -723,17 +1600,35 @@ button:focus-visible {
     body {
         background: white;
     }
-    
+
     .screen {
         box-shadow: none;
         border: 1px solid #ccc;
     }
-    
+
     .answer-btn,
-    .count-btn,
     .restart-button {
         border: 1px solid #333;
         background: white;
         color: black;
     }
+}
+
+/* 日志面板滚动条样式 */
+.log-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.log-body::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.log-body::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 2px;
+}
+
+.streak-coeff {
+    display: inline-block;
+    min-width: 30px;
 }

@@ -6,6 +6,12 @@
 global.document = document;
 global.window = window;
 
+// 使存储适配器全局可用（ScoreManager 默认使用 LocalStorageAdapter）
+const LocalStorageAdapter = require('../js/LocalStorageAdapter');
+const ApiStorageAdapter = require('../js/ApiStorageAdapter');
+global.LocalStorageAdapter = LocalStorageAdapter;
+global.ApiStorageAdapter = ApiStorageAdapter;
+
 // 模拟console方法以避免测试输出干扰
 global.console = {
     ...console,

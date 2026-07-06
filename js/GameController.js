@@ -3,102 +3,151 @@
  * 负责管理游戏状态和流程，协调各组件间的交互
  */
 class GameController {
-    constructor() {
+    constructor(storageAdapter) {
         this.questionGenerator = new QuestionGenerator();
-        this.scoreManager = new ScoreManager();
-        this.uiRenderer = new UIRenderer();
+        this.scoreManager = new ScoreManager(storageAdapter);
+        this.uiRenderer = new UIRenderer(this);
 
         // 音效
         this.correctSound = new Audio('sound/kara-yippee.ogg');
         this.wrongSound = new Audio('sound/kara-not-that-one.ogg');
 
+        this.FIXED_QUESTION_COUNT = 45;
+
         this.gameState = {
             currentQuestionIndex: 0,
             questions: [],
             isGameActive: false,
-            selectedQuestionCount: 10,
-            questionType: 'multiplication'
+            questionType: 'division'
         };
-        
+
         this.initializeEventListeners();
+    }
+
+    /**
+     * 异步初始化：加载持久化数据并显示开始界面
+     */
+    async init() {
+        await this.scoreManager.init();
+        this.uiRenderer.renderStartScreen(this.scoreManager.getTotalScore());
     }
 
     /**
      * 初始化事件监听器
      */
     initializeEventListeners() {
-        let currentQuestionType = 'multiplication';
-
-        // 题目类型选择
         document.addEventListener('click', (e) => {
-            // 题目类型选择按钮
-            if (e.target.classList.contains('type-btn')) {
-                document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                currentQuestionType = e.target.dataset.type;
+            // 开始答题按钮
+            if (e.target.id === 'start-game-btn') {
+                this.startGame();
             }
 
-            // 题目数量选择按钮
-            if (e.target.classList.contains('count-btn')) {
-                const count = parseInt(e.target.dataset.count);
-                this.startGame(count, currentQuestionType);
+            // 退出游戏按钮
+            if (e.target.id === 'exit-game-btn') {
+                this.exitGame();
             }
-            
+
             // 答案选择按钮
             if (e.target.classList.contains('answer-btn') && this.gameState.isGameActive) {
                 const selectedIndex = parseInt(e.target.dataset.answer);
                 this.submitAnswer(selectedIndex);
             }
-            
+
             // 重新开始按钮
             if (e.target.id === 'restart-btn') {
                 this.resetGame();
+            }
+
+            // 清空积分按钮（开始界面）
+            if (e.target.id === 'clear-score-btn') {
+                this.clearScore();
+            }
+
+            // 抽红包入口按钮（开始界面）
+            if (e.target.id === 'lottery-btn-start') {
+                this.showLottery();
+            }
+
+            // 抽红包入口按钮（结果界面）
+            if (e.target.id === 'lottery-btn-result') {
+                this.showLottery();
+            }
+
+            // 拆红包按钮
+            if (e.target.id === 'open-packet-btn') {
+                this.openLotteryPacket();
+            }
+
+            // 关闭红包按钮
+            if (e.target.id === 'close-lottery-btn') {
+                this.closeLottery();
+            }
+
+            // 红包关闭X按钮
+            if (e.target.id === 'lottery-close-x') {
+                this.closeLottery();
+            }
+
+            // 日志面板切换
+            if (e.target.id === 'log-toggle' || e.target.closest('#log-toggle')) {
+                this.toggleLogPanel();
+            }
+
+            // 积分记录入口（开始界面）
+            if (e.target.id === 'log-btn-start') {
+                this.showLogHistory();
+            }
+
+            // 关闭积分记录弹窗
+            if (e.target.id === 'log-history-close') {
+                this.hideLogHistory();
+            }
+
+            // 积分记录筛选按钮
+            if (e.target.classList.contains('filter-type-btn')) {
+                document.querySelectorAll('.filter-type-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                this.refreshLogHistory();
+            }
+
+            });
+
+        // 积分记录日期筛选（change事件）
+        document.addEventListener('change', (e) => {
+            if (e.target.id === 'filter-date') {
+                this.refreshLogHistory();
             }
         });
     }
 
     /**
-     * 开始游戏
-     * @param {number} questionCount - 题目数量
-     * @param {string} questionType - 题目类型 'multiplication' 或 'division'
+     * 开始游戏（固定45题，仅除法）
      */
-    startGame(questionCount = 10, questionType = 'multiplication') {
+    startGame() {
         try {
-            // 验证输入参数
-            if (!Number.isInteger(questionCount) || questionCount <= 0) {
-                console.warn('无效的题目数量，使用默认值10');
-                questionCount = 10;
-            }
+            const questionType = 'division';
 
-            // 验证题目类型
-            if (questionType !== 'multiplication' && questionType !== 'division' && questionType !== 'mixed') {
-                console.warn('无效的题目类型，使用默认值multiplication');
-                questionType = 'multiplication';
-            }
-
-            this.gameState.selectedQuestionCount = questionCount;
             this.gameState.currentQuestionIndex = 0;
             this.gameState.isGameActive = true;
             this.gameState.questionType = questionType;
 
             // 重置管理器
             this.scoreManager.reset();
-            this.scoreManager.setTotalQuestions(questionCount);
+            this.scoreManager.setTotalQuestions(this.FIXED_QUESTION_COUNT);
             this.questionGenerator.reset();
             this.questionGenerator.setQuestionType(questionType);
 
             // 生成题目
-            this.gameState.questions = this.questionGenerator.generateQuestions(questionCount);
-            
-            // 验证题目生成是否成功
-            if (!this.gameState.questions || this.gameState.questions.length !== questionCount) {
+            this.gameState.questions = this.questionGenerator.generateQuestions(this.FIXED_QUESTION_COUNT);
+
+            if (!this.gameState.questions || this.gameState.questions.length !== this.FIXED_QUESTION_COUNT) {
                 throw new Error('题目生成失败');
             }
-            
+
             // 显示第一题
             this.showCurrentQuestion();
-            
-            console.log(`游戏开始：${questionCount}题模式`);
+
+            console.log(`游戏开始：${this.FIXED_QUESTION_COUNT}题除法模式`);
         } catch (error) {
             console.error('开始游戏时发生错误:', error);
             this.handleGameError('游戏启动失败，请重试');
@@ -114,18 +163,16 @@ class GameController {
                 const currentQuestion = this.gameState.questions[this.gameState.currentQuestionIndex];
                 const progress = this.scoreManager.getProgress();
                 const stats = this.scoreManager.getStatistics();
-                
-                // 验证题目数据完整性
+                const totalScore = this.scoreManager.getTotalScore();
+
                 if (!currentQuestion || !currentQuestion.options || currentQuestion.options.length !== 4) {
                     throw new Error('题目数据不完整');
                 }
-                
-                this.uiRenderer.renderGameScreen(currentQuestion, progress, stats);
-                
-                const questionDisplay = currentQuestion.questionType === 'division'
-                    ? `${currentQuestion.dividend} ÷ ${currentQuestion.divisor}`
-                    : `${currentQuestion.multiplicand} × ${currentQuestion.multiplier}`;
-                console.log(`显示第${this.gameState.currentQuestionIndex + 1}题: ${questionDisplay}`);
+
+                const streakInfo = this.scoreManager.getCurrentStreakInfo();
+                this.uiRenderer.renderGameScreen(currentQuestion, progress, stats, totalScore, streakInfo);
+
+                console.log(`显示第${this.gameState.currentQuestionIndex + 1}题: ${currentQuestion.dividend} ÷ ${currentQuestion.divisor}`);
             } else {
                 console.warn('没有更多题目可显示');
                 this.endGame();
@@ -138,47 +185,56 @@ class GameController {
 
     /**
      * 提交答案
-     * @param {number} selectedIndex - 选择的答案索引
      */
-    submitAnswer(selectedIndex) {
+    async submitAnswer(selectedIndex) {
         try {
             if (!this.gameState.isGameActive) {
                 console.warn('游戏未激活，忽略答案提交');
                 return;
             }
-            
-            // 验证输入参数
+
             if (!Number.isInteger(selectedIndex) || selectedIndex < 0 || selectedIndex > 3) {
                 console.warn('无效的答案索引:', selectedIndex);
                 return;
             }
-            
+
             const currentQuestion = this.gameState.questions[this.gameState.currentQuestionIndex];
             if (!currentQuestion) {
                 throw new Error('当前题目不存在');
             }
-            
+
             const selectedAnswer = currentQuestion.options[selectedIndex];
             const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
-            
+
             // 记录用户答案
             currentQuestion.userAnswer = selectedAnswer;
             currentQuestion.isCorrect = isCorrect;
-            
-            // 更新得分
-            this.scoreManager.recordAnswer(isCorrect);
-            
+
+            // 记录答案并获取积分变化
+            const answerResult = await this.scoreManager.recordAnswer(isCorrect);
+
             // 找到正确答案的索引
             const correctIndex = currentQuestion.options.indexOf(currentQuestion.correctAnswer);
-            
-            // 检查是否是最后一题
+
             const isLastQuestion = this.gameState.currentQuestionIndex === this.gameState.questions.length - 1;
-            
-            // 显示视觉反馈 (需求 9.1, 9.5)
+
+            // 获取最新统计数据
+            const stats = this.scoreManager.getStatistics();
+            const totalScore = this.scoreManager.getTotalScore();
+
+            // 显示视觉反馈
             this.uiRenderer.highlightCorrectAnswer(correctIndex, selectedIndex, isLastQuestion);
-            
-            // 记录答题日志
-            console.log(`第${this.gameState.currentQuestionIndex + 1}题答题结果: ${isCorrect ? '正确' : '错误'}, 选择: ${selectedAnswer}, 正确答案: ${currentQuestion.correctAnswer}`);
+            this.uiRenderer.updateGameStats(stats, totalScore);
+            this.uiRenderer.showScoreChange(isCorrect, answerResult.scoreChange, answerResult.coefficient);
+
+            // 更新连击显示
+            this.uiRenderer.updateStreakDisplay({
+                streak: answerResult.streak,
+                coefficient: answerResult.coefficient,
+                isCorrect
+            });
+
+            console.log(`第${this.gameState.currentQuestionIndex + 1}题: ${isCorrect ? '正确' : '错误'}, 积分变化: ${answerResult.scoreChange > 0 ? '+' : ''}${answerResult.scoreChange}`);
 
             // 播放音效
             if (isCorrect) {
@@ -190,19 +246,15 @@ class GameController {
             }
 
             if (isCorrect) {
-                // 答对了，直接进入下一题或结束游戏
                 if (isLastQuestion) {
                     setTimeout(() => this.endGame(), 1000);
                 } else {
                     setTimeout(() => this.nextQuestion(), 1000);
                 }
             } else {
-                // 答错了
                 if (isLastQuestion) {
-                    // 最后一题答错，等待2秒后显示结果界面 (需求 9.3)
                     setTimeout(() => this.endGame(), 2000);
                 } else {
-                    // 不是最后一题，等待2秒后进入下一题 (需求 9.2)
                     setTimeout(() => this.nextQuestion(), 2000);
                 }
             }
@@ -218,7 +270,7 @@ class GameController {
     nextQuestion() {
         try {
             this.gameState.currentQuestionIndex++;
-            
+
             if (this.gameState.currentQuestionIndex < this.gameState.questions.length) {
                 this.showCurrentQuestion();
             } else {
@@ -233,18 +285,21 @@ class GameController {
     /**
      * 结束游戏
      */
-    endGame() {
+    async endGame() {
         try {
             this.gameState.isGameActive = false;
+
+            // 合并游戏积分到持久化积分
+            await this.scoreManager.finalizeGameScore();
+
             const finalStats = this.scoreManager.getStatistics();
-            
-            // 验证统计数据
+
             if (!finalStats) {
                 throw new Error('无法获取游戏统计数据');
             }
-            
+
             this.uiRenderer.renderResultScreen(finalStats);
-            
+
             console.log('游戏结束，最终统计:', finalStats);
         } catch (error) {
             console.error('结束游戏时发生错误:', error);
@@ -253,19 +308,95 @@ class GameController {
     }
 
     /**
+     * 退出游戏（保留当前积分）
+     */
+    async exitGame() {
+        if (this.gameState.isGameActive) {
+            this.gameState.isGameActive = false;
+            await this.scoreManager.finalizeGameScore();
+            this.uiRenderer.renderStartScreen(this.scoreManager.getTotalScore());
+            console.log('游戏已退出，积分已保留');
+        }
+    }
+
+    /**
+     * 清空积分（需要验证码 881225）
+     */
+    async clearScore() {
+        const code = prompt('请输入验证码清空所有积分：');
+        if (code !== '881225') {
+            if (code !== null) {
+                alert('验证码错误，积分未清空');
+            }
+            return;
+        }
+        this.scoreManager.persistedScore = 0;
+        await this.scoreManager.storage.saveScore(0);
+        this.uiRenderer.renderStartScreen(0);
+    }
+
+    /**
+     * 显示抽红包界面
+     */
+    showLottery() {
+        const totalScore = this.scoreManager.getTotalScore();
+        this.uiRenderer.showLotteryScreen(totalScore);
+    }
+
+    /**
+     * 执行抽红包
+     */
+    async openLotteryPacket() {
+        const result = await this.scoreManager.drawLottery();
+
+        if (!result.success) {
+            this.uiRenderer.showLotteryError(result.message);
+            return;
+        }
+
+        const totalScore = this.scoreManager.getTotalScore();
+        this.uiRenderer.showLotteryResult(result.prize, totalScore);
+
+        // 更新开始界面的积分显示
+        this.uiRenderer.updateStartScreenScore(totalScore);
+    }
+
+    /**
+     * 关闭抽红包界面
+     */
+    closeLottery() {
+        const totalScore = this.scoreManager.getTotalScore();
+        this.uiRenderer.hideLotteryScreen(totalScore);
+
+        // 如果结果界面可见，同步更新其积分显示
+        const resultScreen = document.getElementById('result-screen');
+        if (resultScreen && resultScreen.classList.contains('active')) {
+            const stats = this.scoreManager.getStatistics();
+            this.uiRenderer.updateResultScreenScore(stats);
+        }
+    }
+
+    /**
+     * 切换日志面板
+     */
+    toggleLogPanel() {
+        this.uiRenderer.toggleLogPanel();
+    }
+
+    /**
      * 重置游戏
      */
-    resetGame() {
+    async resetGame() {
         try {
             this.gameState.isGameActive = false;
             this.gameState.currentQuestionIndex = 0;
             this.gameState.questions = [];
-            
-            this.scoreManager.reset();
+
+            await this.scoreManager.init();
             this.questionGenerator.reset();
-            
-            this.uiRenderer.renderStartScreen();
-            
+
+            this.uiRenderer.renderStartScreen(this.scoreManager.getTotalScore());
+
             console.log('游戏已重置');
         } catch (error) {
             console.error('重置游戏时发生错误:', error);
@@ -275,28 +406,22 @@ class GameController {
 
     /**
      * 处理游戏错误
-     * @param {string} message - 错误消息
      */
     handleGameError(message) {
         console.error('游戏错误:', message);
-        
-        // 重置游戏状态
         this.gameState.isGameActive = false;
-        
-        // 显示错误消息给用户
+
         if (this.uiRenderer && typeof this.uiRenderer.showErrorFeedback === 'function') {
             this.uiRenderer.showErrorFeedback(message);
         }
-        
-        // 返回到开始界面
-        setTimeout(() => {
-            this.resetGame();
+
+        setTimeout(async () => {
+            await this.resetGame();
         }, 3000);
     }
 
     /**
      * 获取当前游戏状态
-     * @returns {Object} 游戏状态
      */
     getGameState() {
         return {
@@ -308,7 +433,6 @@ class GameController {
 
     /**
      * 检查游戏是否进行中
-     * @returns {boolean} 游戏是否进行中
      */
     isGameInProgress() {
         return this.gameState.isGameActive;
@@ -316,7 +440,6 @@ class GameController {
 
     /**
      * 获取当前题目信息
-     * @returns {Object|null} 当前题目信息
      */
     getCurrentQuestion() {
         if (this.gameState.currentQuestionIndex < this.gameState.questions.length) {
@@ -327,7 +450,6 @@ class GameController {
 
     /**
      * 获取游戏进度百分比
-     * @returns {number} 进度百分比 (0-100)
      */
     getProgressPercentage() {
         if (this.gameState.questions.length === 0) return 0;
@@ -335,8 +457,52 @@ class GameController {
     }
 
     /**
-     * 暂停游戏
+     * 获取最近日志（使用内存缓存，同步）
      */
+    getLogs() {
+        return this.scoreManager.getRecentLogs(100);
+    }
+
+    /**
+     * 显示积分历史弹窗
+     */
+    async showLogHistory() {
+        const allLogs = await this.scoreManager.getAllLogs();
+        this.uiRenderer.showLogHistory(allLogs);
+    }
+
+    /**
+     * 隐藏积分历史弹窗
+     */
+    hideLogHistory() {
+        this.uiRenderer.hideLogHistory();
+    }
+
+    /**
+     * 根据当前筛选条件刷新积分记录显示
+     */
+    async refreshLogHistory() {
+        const allLogs = await this.scoreManager.getAllLogs();
+        const activeFilter = document.querySelector('.filter-type-btn.active');
+        const filterType = activeFilter ? activeFilter.dataset.filter : 'all';
+        const filterDate = document.getElementById('filter-date') ? document.getElementById('filter-date').value : '';
+
+        const filtered = allLogs.filter(log => {
+            // 类型筛选
+            if (filterType !== 'all' && log.type !== filterType) return false;
+            // 日期筛选：日志的 timestamp 格式如 "2026/7/6 14:30:00"
+            if (filterDate) {
+                const logDate = log.timestamp.split(' ')[0];
+                // 将各种日期格式统一为 YYYY-MM-DD 比较
+                const logDateNormalized = logDate.replace(/\//g, '-');
+                if (logDateNormalized !== filterDate) return false;
+            }
+            return true;
+        });
+
+        this.uiRenderer.refreshLogHistory(filtered);
+    }
+
     pauseGame() {
         if (this.gameState.isGameActive) {
             this.gameState.isGameActive = false;
@@ -344,9 +510,6 @@ class GameController {
         }
     }
 
-    /**
-     * 恢复游戏
-     */
     resumeGame() {
         if (!this.gameState.isGameActive && this.gameState.questions.length > 0) {
             this.gameState.isGameActive = true;
@@ -354,9 +517,6 @@ class GameController {
         }
     }
 
-    /**
-     * 跳过当前题目 (调试用)
-     */
     skipCurrentQuestion() {
         if (this.gameState.isGameActive && this.gameState.questions.length > 0) {
             console.log('跳过当前题目');
@@ -364,10 +524,6 @@ class GameController {
         }
     }
 
-    /**
-     * 获取所有组件的状态信息 (调试用)
-     * @returns {Object} 组件状态信息
-     */
     getComponentsStatus() {
         return {
             gameController: {

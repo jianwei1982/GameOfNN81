@@ -3,26 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>99乘法表游戏</title>
+    <title>数学闯关游戏</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="app">
         <!-- 开始界面 -->
         <div id="start-screen" class="screen active">
-            <h1>99乘法表游戏 -- 送给Meg</h1>
-            <p>选择题目类型</p>
+            <h1>数学闯关 -- 送给Meg</h1>
+            <p>选择题目类型，开始45道题的挑战</p>
             <div class="question-type-options">
-                <button class="type-btn active" data-type="multiplication">乘法</button>
-                <button class="type-btn" data-type="division">除法</button>
-                <button class="type-btn" data-type="mixed">混合</button>
+                <button class="type-btn disabled" data-type="multiplication" disabled>乘法</button>
+                <button class="type-btn active" data-type="division">除法</button>
+                <button class="type-btn disabled" data-type="mixed" disabled>混合</button>
             </div>
-            <p>选择题目数量开始练习</p>
-            <div class="question-count-options">
-                <button class="count-btn" data-count="10">10题</button>
-                <button class="count-btn" data-count="20">20题</button>
-                <button class="count-btn" data-count="50">50题</button>
-                <button class="count-btn" data-count="100">100题</button>
+            <button id="start-game-btn" class="start-game-btn">开始答题（45题）</button>
+
+            <div class="start-score-section">
+                <div class="score-display">
+                    <span class="score-label">当前积分</span>
+                    <span id="start-score" class="score-value">0</span>
+                </div>
+                <div class="start-actions">
+                    <button id="clear-score-btn" class="clear-score-btn">清空积分</button>
+                    <button id="log-btn-start" class="log-history-btn">📋 积分记录</button>
+                    <button id="lottery-btn-start" class="lottery-nav-btn">🎁 积分抽红包</button>
+                </div>
             </div>
         </div>
 
@@ -30,50 +36,171 @@
         <div id="game-screen" class="screen">
             <div class="game-header">
                 <div class="progress">
-                    <span id="current-question">1</span> / <span id="total-questions">10</span>
+                    <span id="current-question">1</span> / <span id="total-questions">45</span>
                 </div>
-                <div class="score-info">
-                    <span>得分: <span id="current-score">0</span></span>
-                    <span>正确率: <span id="accuracy">0%</span></span>
+                <div class="game-header-right">
+                    <div class="game-score-info">
+                        <span class="score-item">积分: <span id="current-score">0</span></span>
+                        <span class="score-item">正确率: <span id="accuracy">0%</span></span>
+                    </div>
+                    <button id="exit-game-btn" class="exit-game-btn">退出</button>
                 </div>
             </div>
-            
+
+            <!-- 连击指示器 -->
+            <div class="streak-indicator">
+                <span id="streak-type" class="streak-type">连续</span>
+                <span id="streak-count" class="streak-count">0</span>
+                <span class="streak-label">次</span>
+                <span class="streak-coeff-label">系数:</span>
+                <span id="streak-coeff" class="streak-coeff">1.0</span>
+                <span id="score-change" class="score-change"></span>
+            </div>
+
             <div class="question-container">
-                <div id="question-text" class="question">3 × 7 = ?</div>
+                <div id="question-text" class="question">? ÷ ? = ?</div>
                 <div class="answer-options">
-                    <button class="answer-btn" data-answer="0">21</button>
-                    <button class="answer-btn" data-answer="1">18</button>
-                    <button class="answer-btn" data-answer="2">24</button>
-                    <button class="answer-btn" data-answer="3">20</button>
+                    <button class="answer-btn" data-answer="0">?</button>
+                    <button class="answer-btn" data-answer="1">?</button>
+                    <button class="answer-btn" data-answer="2">?</button>
+                    <button class="answer-btn" data-answer="3">?</button>
+                </div>
+            </div>
+
+            <!-- 日志面板 -->
+            <div class="log-panel">
+                <div class="log-header" id="log-toggle">
+                    <span>📋 积分记录</span>
+                    <span id="log-toggle-icon">▶</span>
+                </div>
+                <div class="log-body" id="log-body">
+                    <div class="log-list" id="log-list"></div>
                 </div>
             </div>
         </div>
 
         <!-- 结果界面 -->
         <div id="result-screen" class="screen">
-            <h2>游戏结束！</h2>
+            <h2>挑战完成！</h2>
             <div class="result-stats">
                 <div class="stat-item">
-                    <span class="stat-label">最终得分:</span>
-                    <span id="final-score" class="stat-value">0</span>
+                    <span class="stat-label">最终积分:</span>
+                    <span id="final-score" class="stat-value highlight-score">0</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">正确率:</span>
                     <span id="final-accuracy" class="stat-value">0%</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">答对题数:</span>
-                    <span id="correct-count" class="stat-value">0</span>
+                    <span class="stat-label">答对/答错:</span>
+                    <span id="correct-count" class="stat-value">0 / <span id="incorrect-count">0</span></span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">答错题数:</span>
-                    <span id="incorrect-count" class="stat-value">0</span>
+                    <span class="stat-label">最高连续正确:</span>
+                    <span id="max-streak-correct" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最高连续错误:</span>
+                    <span id="max-streak-incorrect" class="stat-value">0</span>
                 </div>
             </div>
-            <button id="restart-btn" class="restart-button">再来一次</button>
+            <div class="result-actions">
+                <button id="restart-btn" class="restart-button">再来一次</button>
+                <button id="lottery-btn-result" class="lottery-button">🎁 积分抽红包</button>
+            </div>
+        </div>
+
+        <!-- 积分记录弹窗 -->
+        <div id="log-history-overlay" class="log-history-overlay" style="display:none;">
+            <div class="log-history-container">
+                <div class="log-history-header">
+                    <span>📋 积分历史记录</span>
+                    <button id="log-history-close" class="log-history-close-btn">✕</button>
+                </div>
+                <div class="log-history-filters">
+                    <div class="filter-group">
+                        <label class="filter-label">日期筛选</label>
+                        <input type="date" id="filter-date" class="filter-date-input">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">类型筛选</label>
+                        <div class="filter-type-btns">
+                            <button class="filter-type-btn active" data-filter="all">全部</button>
+                            <button class="filter-type-btn" data-filter="correct">✅ 答对</button>
+                            <button class="filter-type-btn" data-filter="wrong">❌ 答错</button>
+                            <button class="filter-type-btn" data-filter="lottery">🎁 抽红包</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="log-history-body" id="log-history-body">
+                    <div class="log-history-list" id="log-history-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 抽红包界面（蒙层） -->
+        <div id="lottery-overlay" class="lottery-overlay" style="display:none;">
+            <div class="lottery-container" id="lottery-container">
+                <button id="lottery-close-x" class="lottery-close-x">✕</button>
+                <!-- 关闭红包阶段：显示红包 -->
+                <div id="lottery-closed" class="lottery-phase">
+                    <div class="red-packet-wrapper">
+                        <div class="red-packet">
+                            <div class="red-packet-top">
+                                <span class="red-packet-line"></span>
+                                <span class="red-packet-amount-label">积分抽红包</span>
+                                <span class="red-packet-line"></span>
+                            </div>
+                            <div class="red-packet-money">
+                                <span class="money-amount" id="lottery-cost">-100</span>
+                                <span class="money-unit">积分</span>
+                            </div>
+                            <div class="red-packet-bottom">
+                                <button id="open-packet-btn" class="open-packet-btn">拆</button>
+                            </div>
+                        </div>
+                        <div class="red-packet-balance">
+                            余额: <span id="lottery-balance-before">0</span> 积分
+                        </div>
+                    </div>
+                </div>
+                <!-- 开红包阶段：打开动画 -->
+                <div id="lottery-opening" class="lottery-phase" style="display:none;">
+                    <div class="red-packet-opening">
+                        <div class="opening-effect"></div>
+                        <div class="opening-amount">
+                            <div class="opening-label">恭喜获得</div>
+                            <div class="opening-money" id="lottery-result-amount">0.00</div>
+                            <div class="opening-unit">元</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 已打开阶段：显示结果 -->
+                <div id="lottery-opened" class="lottery-phase" style="display:none;">
+                    <div class="red-packet-opened">
+                        <div class="opened-effect"></div>
+                        <div class="opened-amount-display">
+                            <div class="opened-label">🎉 恭喜获得</div>
+                            <div class="opened-money" id="lottery-result-opened">0.00</div>
+                            <div class="opened-unit">元</div>
+                        </div>
+                        <div class="opened-balance">
+                            当前积分: <span id="lottery-balance-after">0</span>
+                        </div>
+                        <button id="close-lottery-btn" class="close-lottery-btn">开心收下</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script>
+        // 配置 API 基础路径，注释掉则使用 localStorage（纯前端模式）
+        // 启用后端 MySQL 时取消注释：
+        window.API_BASE_URL = '/api';
+    </script>
+    <script src="js/LocalStorageAdapter.js"></script>
+    <script src="js/ApiStorageAdapter.js"></script>
     <script src="js/QuestionGenerator.js"></script>
     <script src="js/ScoreManager.js"></script>
     <script src="js/UIRenderer.js"></script>
