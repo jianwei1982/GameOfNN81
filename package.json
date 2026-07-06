@@ -40,6 +40,11 @@
     ]
   },
   "dependencies": {
-    "netlify-cli": "^23.13.0"
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.5",
+    "netlify-cli": "^23.13.0",
+    "serverless-http": "^4.0.0"
   }
 }
